@@ -10,8 +10,10 @@
  */
 
 import Foundation
+import UIKit
 import CKSwift
 import CKTextSwift
+import ComponentKit
 
 #if swift(>=5.3)
 @ComponentBuilder public func SwiftQuoteComponent(from quote: Quote) -> Component {
@@ -27,7 +29,20 @@ import CKTextSwift
 #else
 @objc public class Trampoline : NSObject {
    @objc public class func component(text: String, author: String, style: Int) -> Component {
-    fatalError("Swift 5.3 required")
+    return FlexboxComponent(
+        view: ViewConfiguration(viewClass: UISwitch.self, attributes: { () -> [ComponentViewAttributeSwiftBridge] in
+            return [
+                ComponentViewAttributeSwiftBridge(
+                    identifier: "isOn",
+                    applicator: { (view) in
+                        guard let uiswitch = view as? UISwitch else {
+                            return
+                        }
+                        uiswitch.isOn = true
+                })
+            ]
+        }),
+        size: ComponentSize(width: 100, height: 50))
    }
 }
 
